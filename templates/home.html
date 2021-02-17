@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+<html>
+	<!-- Banner -->
+	<section id="banner">
+		<div class="inner">
+			<h1>amazing shiny variant db</h1>
+			<p>Web portal for variant database</p>
+		</div>
+    </section>
+
+    <section class="wrapper">
+		<div class="inner">
+			<div class="highlights" style="padding-top: 100px;">
+				<section>
+					<div class="content" data-tooltip="View variants in database and make queries etc.">
+						<a href="search"><img src="/static/images/search.png" style="width:350px;height:390px;"></a>
+					</div>
+                </section>
+                <section>
+					<div class="" style="width:50px;height:200px;">
+                        <!-- super hacky way to get blank space between icons as main.css is written for 3 column grid but ¯\_(ツ)_/¯ -->
+					</div>
+				</section>
+				<section>
+					<div class="content" data-tooltip="Upload new JSON of variant data to database">
+						<a href="upload"><img src="/static/images/upload.png" style="width:350px;height:390px;"></a>
+					</div>
+				</section>
+			</div>
+		</div>
+	</section>
+</html>
+
+{% endblock %}
