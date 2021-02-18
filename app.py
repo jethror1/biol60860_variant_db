@@ -20,9 +20,8 @@ app.config['SECRET_KEY'] = 'C2HWGVoMGfNTBsrYQg8EcMrdTimkZfAb'
 
 # UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
 
-UPLOAD_FOLDER = str(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "/uploads")
-)
+UPLOAD_FOLDER = str(os.path.join(os.getcwd(), "/uploads"))
+print(UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = {"json"}
 
 app.config["MONGO_URI"] = "mongodb://localhost:27017/manchester2021"
