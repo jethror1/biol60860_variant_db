@@ -1,13 +1,15 @@
 import os
 import json
-from flask import Flask, flash, session, request, url_for, redirect, render_template, send_from_directory
-from flask_pymongo import PyMongo
-from werkzeug.utils import secure_filename
-from mongo_datatables import DataTables
-# from app import mongo
 
+from flask import (
+    Flask, flash, session, request, url_for, redirect,
+    render_template, send_from_directory
+)
 from flask_bootstrap import Bootstrap
+from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
+from mongo_datatables import DataTables
+from werkzeug.utils import secure_filename
 from wtforms import StringField, SubmitField, SelectField, IntegerField
 from wtforms.validators import DataRequired
 
@@ -15,9 +17,6 @@ from wtforms.validators import DataRequired
 app = Flask(__name__)
 # Flask-WTF requires an encryption key - the string can be anything
 app.config['SECRET_KEY'] = 'C2HWGVoMGfNTBsrYQg8EcMrdTimkZfAb'
-
-# Flask-Bootstrap requires this line
-
 
 # UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
 
@@ -85,7 +84,7 @@ class VariantForm(FlaskForm):
             ("7", "chr7"),
             ("8", "chr8"),
             ("9", "chr8"),
-            ("10","chr10"),
+            ("10", "chr10"),
             ("11", "chr11"),
             ("12", "chr12"),
             ("13", "chr13"),
