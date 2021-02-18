@@ -13,9 +13,11 @@
 		</div>
     </section>
 
+
+
     <section class="wrapper">
 		<div class="inner">
-			<div class="highlights" style="padding-top: 100px;">
+            <div class="highlights" style="padding-top: 100px;">
 				<section>
 					<div class="content" data-tooltip="View variants in database and make queries etc.">
 						<a href="search"><img src="/static/images/search.png" style="width:350px;height:390px;"></a>
@@ -30,10 +32,13 @@
 					<div class="content" data-tooltip="Bulk upload JSON of variant data to database">
 						<a href="bulk_upload"><img src="/static/images/bulk_upload.png" style="width:350px;height:390px;"></a>
 					</div>
-				</section>
-			</div>
-		</div>
-	</section>
+                </section>
+            </div>
+            <div class="" style="margin: auto; max-width: 395px;">
+                <h3><b>Total variants in database: {{ total_vars }}</b></h3>
+            </div>
+        </div>
+    </section>
 </html>
 
 {% endblock %}
