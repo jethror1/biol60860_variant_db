@@ -6,7 +6,7 @@
 
 
 <div style="padding: 100px;">
-    <table id="variant_table" class="table display">
+    <table id="variant_table" class="display">
         <thead>
             <th>Name</th>
             <th>Mappings</th>
@@ -38,12 +38,8 @@
         </tbody>
     </table>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#variant_table').DataTable()});
-</script>
+
 {% endblock scripts %}
