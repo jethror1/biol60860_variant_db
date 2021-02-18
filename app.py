@@ -17,9 +17,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'C2HWGVoMGfNTBsrYQg8EcMrdTimkZfAb'
 
 # Flask-Bootstrap requires this line
-Bootstrap(app)
 
-mongo = PyMongo(app)
 
 UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
 ALLOWED_EXTENSIONS = {"json"}
@@ -27,6 +25,7 @@ ALLOWED_EXTENSIONS = {"json"}
 app.config["MONGO_URI"] = "mongodb://localhost:27017/manchester2021"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
+Bootstrap(app)
 
 DATA = list(mongo.db.variants.find({}))
 
