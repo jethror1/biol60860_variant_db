@@ -20,7 +20,8 @@ app.config['SECRET_KEY'] = 'C2HWGVoMGfNTBsrYQg8EcMrdTimkZfAb'
 
 # UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
 
-UPLOAD_FOLDER = str(os.path.join(os.getcwd(), "/uploads"))
+UPLOAD_FOLDER = f"{os.getcwd()}/uploads"
+
 print(UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = {"json"}
 
@@ -124,7 +125,8 @@ class VariantForm(FlaskForm):
 @app.route('/')
 def home():
     """Main home page for navigation"""
-    return render_template('home.html')
+    total_var = variants = mongo.db.variants.find({}).count()
+    return render_template('home.html', total_var=total_var)
 
 
 
