@@ -216,11 +216,15 @@ class SearchForm(FlaskForm):
     name = StringField('Variant Name')
     build = SelectField(
         'Reference Build',
-        choices=[('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')]
+        choices=[
+            (False, "------ SELECT BUILD ------"),
+            ('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')
+        ]
     )
     chromosome = SelectField(
         'Chromosome',
         choices=[
+            (False, "------ SELECT CHROMOSOME ------"),
             ("1", "chr1"), ("2", "chr2"), ("3", "chr3"),
             ("4", "chr4"), ("5", "chr5"), ("6", "chr6"),
             ("7", "chr7"), ("8", "chr8"), ("9", "chr8"),
@@ -234,6 +238,7 @@ class SearchForm(FlaskForm):
     start = IntegerField('Start Coordinate')
     end = IntegerField('End Coordinate')
     significance = SelectField("Significance of Variant", choices=[
+        (False, "------ SELECT SIGNIFICANCE ------"),
         ("Benign", "Benign"),
         ("Likely Benign", "Likely Benign"),
         ("Variant of Unknown Significance", "Variant of Unknown Significance"),
@@ -247,6 +252,9 @@ class SearchForm(FlaskForm):
 def search():
     """Page for searching database"""
     form = SearchForm()
+
+    # Need to check form, do some validation somehow then query db with this
+    # then return results to search_results template
 
     variants = list(mongo.db.variants.find({}, {
         'name': 1, 'mappings': 1, 'MAF': 1, 'ambiguity': 1, 'var_class': 1,
