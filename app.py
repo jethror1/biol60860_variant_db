@@ -1,5 +1,11 @@
 from flask import Flask, render_template
+from flask_pymongo import PyMongo
+
+
 app = Flask(__name__)
+
+app.config["MONGO_URI"] = "mongodb://localhost:27017/manchester2021"
+mongo = PyMongo(app)
 
 
 @app.route('/')
@@ -8,13 +14,21 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/upload')
-def upload():
-    """Page for uploading new data to database"""
-    return render_template('upload.html')
+@app.route('/single_upload')
+def single_upload():
+    """Page for uploading single variant via form to database"""
+    return render_template('single_upload.html')
+
+
+@app.route('/bulk_upload')
+def bulk_upload():
+    """Page for uploading bulk json data to database"""
+    return render_template('bulk_upload.html')
 
 
 @app.route('/search')
 def search():
     """Page for searching database"""
-    return render_template('search.html')
+    variant = mongo.db.variants.find().count()
+
+    return render_template('search.html', variant=variant)

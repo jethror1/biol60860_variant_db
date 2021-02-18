@@ -1,5 +1,6 @@
 .vscode/settings.json
 variants.json
 playground.mongodb
+__pycache__/app.cpython-38.pyc
 .gitignore
 .gitignore
