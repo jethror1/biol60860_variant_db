@@ -1,2 +1,5 @@
 .vscode/settings.json
 variants.json
+playground.mongodb
+.gitignore
+.gitignore
