@@ -204,7 +204,7 @@ def search():
         'most_severe_consequence': 1
     }))
 
-    return render_template('search.html', variant=variant)
+    return render_template('search.html', variants=variants)
 
 
 if __name__ == "__main__":
