@@ -14,10 +14,16 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/upload')
-def upload():
-    """Page for uploading new data to database"""
-    return render_template('upload.html')
+@app.route('/single_upload')
+def single_upload():
+    """Page for uploading single variant via form to database"""
+    return render_template('single_upload.html')
+
+
+@app.route('/bulk_upload')
+def bulk_upload():
+    """Page for uploading bulk json data to database"""
+    return render_template('bulk_upload.html')
 
 
 @app.route('/search')
