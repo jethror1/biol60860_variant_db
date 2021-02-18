@@ -138,7 +138,7 @@ def single_upload():
     message = ""
     if form.validate_on_submit():
         name = form.name.data
-        if name.lower() in names:
+        if name in names:
             message = "That variant is already in our database."
             return render_template('singleDuplicate.html', name=name, message=message)
         else:
