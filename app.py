@@ -103,7 +103,15 @@ class VariantForm(FlaskForm):
     # chromosome = StringField('Chromosome?')
     start = IntegerField('Start Coord?')
     end = IntegerField('End Coord?')
-    significance = SelectField("significance of Variant", choices=[
+    NUCLEOTIDES = [
+        ("G","G"),
+        ("A","A"),
+        ("C","C"),
+        ("T","T"),
+    ]
+    ancestralAllele = SelectField("Wild Type", choices = NUCLEOTIDES)
+    minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
+    significance = SelectField("significance of Variant", choices = [
         ("Benign", "Benign"),
         ("Likely Benign", "Likely Benign"),
         ("Variant of Unknown Significance", "Variant of Unknown Significance"),
@@ -111,21 +119,13 @@ class VariantForm(FlaskForm):
         ("Pathogenic", "Pathogenic"),
     ])
     submit = SubmitField('Submit')
-
+    
 
 @app.route('/')
 def home():
     """Main home page for navigation"""
     return render_template('home.html')
 
-
-# @app.route('/single_upload')
-# def single_upload():
-#     """Page for uploading single variant via form to database"""
-#     mongo.db.variants.insert_one({"name":"test", "MAF":"0.08969698"}).inserted_id
-#     variant = mongo.db.variants.find_one({"name":"test"})
-
-#     return render_template('single_upload.html', variant=variant)
 
 
 @app.route('/single_upload', methods=['GET', 'POST'])
@@ -139,24 +139,22 @@ def single_upload():
         name = form.name.data
         if name.lower() in names:
             message = "That variant is already in our database."
-            return render_template('singleDuplicate.html', message=message)
+            return render_template('singleDuplicate.html', name=name, message=message)
         else:
             mongo.db.variants.insert_one(
                 {
-                    "name": form.name.data,
-                    "chromosome": form.chromosome.data,
-                    "start": form.start.data,
-                    "end": form.end.data,
-                    "clinical_significance": form.significance.data,
+                    "name":form.name.data, 
+                    "chromosome":form.chromosome.data, 
+                    "start":form.start.data, 
+                    "end":form.end.data,
+                    "ancestral_allele":form.ancestralAllele.data,
+                    "minor_allele":form.minorAllele.data,
+                    "clinical_significance":form.significance.data,
                     }
             ).inserted_id
-            variant = mongo.db.variants.find_one({"name": form.name.data})
-            return render_template(
-                'singleSuccessful.html', variant=variant, names=names
-            )
-    return render_template(
-        'single_upload.html', names=names, form=form, message=message
-    )
+            variant = mongo.db.variants.find_one({"name":form.name.data})
+            return render_template('singleSuccessful.html', variant=variant)
+    return render_template('single_upload.html', names=names, form=form, message=message)
 
 
 @app.route('/bulk_upload', methods=['GET', 'POST'])
