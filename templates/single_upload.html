@@ -3,9 +3,14 @@
 {% extends 'base.html' %}
 
 {% block body_block %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 <html>
     Single upload page
+    {{ wtf.quick_form(form) }}
+
+</form>
+
 </html>
 
 {% endblock %}
