@@ -11,7 +11,7 @@ from flask_wtf import FlaskForm
 from mongo_datatables import DataTables
 from werkzeug.utils import secure_filename
 from wtforms import StringField, SubmitField, SelectField, IntegerField
-from wtforms.validators import DataRequired
+import wtforms.validators as validators
 
 
 app = Flask(__name__)
@@ -70,10 +70,21 @@ def get_id(source, name):
 
 
 class VariantForm(FlaskForm):
-    name = StringField('Variant Name?')
+    name = StringField('Variant Name?', validators=[validators.data_required()])
+    TYPE = [
+        (False, "------ SELECT TYPE ------"),
+        ("SNP", "SNP"),
+        ("Deletion", "Deletion"),
+        ("Insertion", "Insertion"),
+        ("Repeat", "Repeat"),
+        ("Substitution", "Substitution"),
+        ("InDel", "InDel"),
+    ]
+    variantType = SelectField("Type of Variant", choices=TYPE)
     chromosome = SelectField(
         'Chromosome?',
         choices=[
+            (False, "------ SELECT CHROMOSOME ------"),
             ("1", "chr1"),
             ("2", "chr2"),
             ("3", "chr3"),
@@ -101,9 +112,11 @@ class VariantForm(FlaskForm):
         ]
     )
     # chromosome = StringField('Chromosome?')
-    start = IntegerField('Start Coord?')
-    end = IntegerField('End Coord?')
+    start = IntegerField('Start Coord?', validators=[validators.data_required()])
+    end = IntegerField('End Coord?', validators=[validators.data_required()])
     NUCLEOTIDES = [
+        (False, "------ SELECT NUCLEOTIDE ------"),
+        ("Null", "Null"),
         ("G","G"),
         ("A","A"),
         ("C","C"),
@@ -112,6 +125,7 @@ class VariantForm(FlaskForm):
     ancestralAllele = SelectField("Wild Type", choices = NUCLEOTIDES)
     minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
     significance = SelectField("significance of Variant", choices = [
+        (False, "------ SELECT SIGNIFICANCE ------"),
         ("Benign", "Benign"),
         ("Likely Benign", "Likely Benign"),
         ("Variant of Unknown Significance", "Variant of Unknown Significance"),
@@ -149,6 +163,7 @@ def single_upload():
             mongo.db.variants.insert_one(
                 {
                     "name":form.name.data, 
+                    "variantType":form.variantType.data, 
                     "chromosome":form.chromosome.data, 
                     "start":form.start.data, 
                     "end":form.end.data,
@@ -158,7 +173,7 @@ def single_upload():
                     }
             ).inserted_id
             variant = mongo.db.variants.find_one({"name":form.name.data})
-            return render_template('singleSuccessful.html', variant=variant)
+            return render_template('singleSuccessful.html',  name=name, names=names, variant=variant)
     return render_template('single_upload.html', names=names, form=form, message=message)
 
 
