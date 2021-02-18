@@ -21,7 +21,11 @@ Bootstrap(app)
 
 mongo = PyMongo(app)
 
-UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
+# UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
+
+UPLOAD_FOLDER = str(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "/uploads")
+)
 ALLOWED_EXTENSIONS = {"json"}
 
 app.config["MONGO_URI"] = "mongodb://localhost:27017/manchester2021"
@@ -30,9 +34,11 @@ mongo = PyMongo(app)
 
 DATA = list(mongo.db.variants.find({}))
 
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def parse_json(filepath):
     try:
@@ -40,8 +46,8 @@ def parse_json(filepath):
         data = [json.loads(line) for line in (open(filepath))]
         return data
     except ValueError as e:
-         print('invalid json!')
-         flash('json file is not valid')
+        print('invalid json!')
+        flash('json file is not valid')
 
 
 def get_names(source):
@@ -51,6 +57,7 @@ def get_names(source):
         name = row["name"].lower()
         names.append(name)
     return sorted(names)
+
 
 def get_id(source, name):
     for row in source:
@@ -67,37 +74,39 @@ def get_id(source, name):
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?')
-    chromosome = SelectField('Chromosome?',
-    choices=[
-        ("1","chr1"),
-        ("2","chr2"),
-        ("3","chr3"),
-        ("4","chr4"),
-        ("5","chr5"),
-        ("6","chr6"),
-        ("7","chr7"),
-        ("8","chr8"),
-        ("9","chr8"),
-        ("10","chr10"),
-        ("11","chr11"),
-        ("12","chr12"),
-        ("13","chr13"),
-        ("14","chr14"),
-        ("15","chr15"),
-        ("16","chr16"),
-        ("17","chr17"),
-        ("18","chr18"),
-        ("19","chr19"),
-        ("20","chr20"),
-        ("21","chr21"),
-        ("22","chr22"),
-        ("X","chrX"),
-        ("Y","chrY"),
-    ])
+    chromosome = SelectField(
+        'Chromosome?',
+        choices=[
+            ("1", "chr1"),
+            ("2", "chr2"),
+            ("3", "chr3"),
+            ("4", "chr4"),
+            ("5", "chr5"),
+            ("6", "chr6"),
+            ("7", "chr7"),
+            ("8", "chr8"),
+            ("9", "chr8"),
+            ("10","chr10"),
+            ("11", "chr11"),
+            ("12", "chr12"),
+            ("13", "chr13"),
+            ("14", "chr14"),
+            ("15", "chr15"),
+            ("16", "chr16"),
+            ("17", "chr17"),
+            ("18", "chr18"),
+            ("19", "chr19"),
+            ("20", "chr20"),
+            ("21", "chr21"),
+            ("22", "chr22"),
+            ("X", "chrX"),
+            ("Y", "chrY"),
+        ]
+    )
     # chromosome = StringField('Chromosome?')
     start = IntegerField('Start Coord?')
     end = IntegerField('End Coord?')
-    significance = SelectField("significance of Variant", choices = [
+    significance = SelectField("significance of Variant", choices=[
         ("Benign", "Benign"),
         ("Likely Benign", "Likely Benign"),
         ("Variant of Unknown Significance", "Variant of Unknown Significance"),
@@ -105,7 +114,6 @@ class VariantForm(FlaskForm):
         ("Pathogenic", "Pathogenic"),
     ])
     submit = SubmitField('Submit')
-    
 
 
 @app.route('/')
@@ -123,8 +131,6 @@ def home():
 #     return render_template('single_upload.html', variant=variant)
 
 
-	
-
 @app.route('/single_upload', methods=['GET', 'POST'])
 def single_upload():
     names = get_names(DATA)
@@ -140,22 +146,26 @@ def single_upload():
         else:
             mongo.db.variants.insert_one(
                 {
-                    "name":form.name.data, 
-                    "chromosome":form.chromosome.data, 
-                    "start":form.start.data, 
-                    "end":form.end.data,
-                    "clinical_significance":form.significance.data,
+                    "name": form.name.data,
+                    "chromosome": form.chromosome.data,
+                    "start": form.start.data,
+                    "end": form.end.data,
+                    "clinical_significance": form.significance.data,
                     }
             ).inserted_id
-            variant = mongo.db.variants.find_one({"name":form.name.data})
-            return render_template('singleSuccessful.html', variant=variant, names=names)
-    return render_template('single_upload.html', names=names, form=form, message=message)
+            variant = mongo.db.variants.find_one({"name": form.name.data})
+            return render_template(
+                'singleSuccessful.html', variant=variant, names=names
+            )
+    return render_template(
+        'single_upload.html', names=names, form=form, message=message
+    )
 
 
 @app.route('/bulk_upload', methods=['GET', 'POST'])
 def bulk_upload():
     """Page for uploading bulk json data to database"""
-    
+
     if request.method == 'POST':
         if 'file' not in request.files: #check for a file
             flash('No file part')
@@ -164,21 +174,27 @@ def bulk_upload():
         if file.filename == "":
             flash('No selected file')
             return redirect(request.url)
-        if file and allowed_file(file.filename): #save the file 
+        if file and allowed_file(file.filename):  # save the file
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            data = parse_json(os.path.join(app.config['UPLOAD_FOLDER'], filename)) #parse the json
+            data = parse_json(
+                os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            )  # parse the json
             newgenes = mongo.db.variants.insert_many(data)
             flash('Upload successful!')
+
             return(redirect('/bulk_upload'))
-            #print(newgenes.inserted_ids)
-            #return redirect(url_for('uploaded_file', filename=filename))
+            # print(newgenes.inserted_ids)
+            # return redirect(url_for('uploaded_file', filename=filename))
+
     return render_template('bulk_upload.html')
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
+
 
 @app.route('/search')
 def search():
@@ -190,6 +206,7 @@ def search():
     }))
 
     return render_template('search.html', variant=variant)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
