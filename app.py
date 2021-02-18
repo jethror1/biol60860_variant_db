@@ -141,12 +141,16 @@ class VariantForm(FlaskForm):
         ("Pathogenic", "Pathogenic"),
     ])
     submit = SubmitField('Submit')
-    
+
 
 @app.route('/')
 def home():
     """Main home page for navigation"""
     total_vars = variants = mongo.db.variants.find({}).count()
+
+    # this = [x.keys() for x in mongo.db.variants.find({})]
+    # this = list(set([i for sub in this for i in sub]))
+    # print(this)
     return render_template('home.html', total_vars=total_vars)
 
 
@@ -215,16 +219,58 @@ def uploaded_file(filename):
                                filename)
 
 
+class SearchForm(FlaskForm):
+    """Form fields for user searching database"""
+    name = StringField('Variant Name')
+    build = SelectField(
+        'Reference Build',
+        choices=[
+            (False, "------ SELECT BUILD ------"),
+            ('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')
+        ]
+    )
+    chromosome = SelectField(
+        'Chromosome',
+        choices=[
+            (False, "------ SELECT CHROMOSOME ------"),
+            ("1", "chr1"), ("2", "chr2"), ("3", "chr3"),
+            ("4", "chr4"), ("5", "chr5"), ("6", "chr6"),
+            ("7", "chr7"), ("8", "chr8"), ("9", "chr8"),
+            ("10", "chr10"), ("11", "chr11"), ("12", "chr12"),
+            ("13", "chr13"), ("14", "chr14"), ("15", "chr15"),
+            ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
+            ("19", "chr19"), ("20", "chr20"), ("21", "chr21"),
+            ("22", "chr22"), ("X", "chrX"), ("Y", "chrY"),
+        ]
+    )
+    start = IntegerField('Start Coordinate')
+    end = IntegerField('End Coordinate')
+    significance = SelectField("Significance of Variant", choices=[
+        (False, "------ SELECT SIGNIFICANCE ------"),
+        ("Benign", "Benign"),
+        ("Likely Benign", "Likely Benign"),
+        ("Variant of Unknown Significance", "Variant of Unknown Significance"),
+        ("Likely Pathogenic", "Likely Pathogenic"),
+        ("Pathogenic", "Pathogenic"),
+    ])
+    submit = SubmitField('Submit')
+
+
 @app.route('/search')
 def search():
     """Page for searching database"""
+    form = SearchForm()
+
+    # Need to check form, do some validation somehow then query db with this
+    # then return results to search_results template
+
     variants = list(mongo.db.variants.find({}, {
         'name': 1, 'mappings': 1, 'MAF': 1, 'ambiguity': 1, 'var_class': 1,
         'synonyms': 1, 'evidence': 1, 'ancestral_allele': 1, 'minor_allele': 1,
-        'most_severe_consequence': 1
+        'most_severe_consequence': 1, 'clinical_significance': 1
     }))
 
-    return render_template('search.html', variants=variants)
+    return render_template('search.html', variants=variants, form=form)
 
 
 if __name__ == "__main__":

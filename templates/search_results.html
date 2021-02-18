@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+<div style="padding: 100px;">
+    <table id="variant_table" class="display">
+        <thead>
+            <th>Name</th>
+            <th>Mappings</th>
+            <th>MAF</th>
+            <th>Location</th>
+            <th>Ambiguity</th>
+            <th>Class</th>
+            <th>Synonyms</th>
+            <th>Evidence</th>
+            <th>Ancestral_allele</th>
+            <th>Minor_allele</th>
+            <th>Consequence</th>
+            <th>Clin Sig</th>
+        </thead>
+        <tbody>
+            {% for var in variants %}
+            <tr>
+                <td>{{var.name}}</td>
+                <td>{{var.mappings}}</td>
+                <td>{{var.MAF}}</td>
+                <td>{{var.location}}</td>
+                <td>{{var.ambiguity}}</td>
+                <td>{{var.var_class}}</td>
+                <td>{{var.synonyms}}</td>
+                <td>{{var.evidence}}</td>
+                <td>{{var.ancestral_allele}}</td>
+                <td>{{var.minor_allele}}</td>
+                <td>{{var.most_severe_consequence}}</td>
+                <td>{{var.clinical_significance}}</td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock scripts %}
