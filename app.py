@@ -1,5 +1,10 @@
-from flask import Flask, render_template
+import json
+
+from bson.json_util import dumps
+from flask import Flask, render_template, request, jsonify
 from flask_pymongo import PyMongo
+from mongo_datatables import DataTables
+# from app import mongo
 
 
 app = Flask(__name__)
@@ -29,6 +34,10 @@ def bulk_upload():
 @app.route('/search')
 def search():
     """Page for searching database"""
-    variant = mongo.db.variants.find().count()
+    variants = list(mongo.db.variants.find({}, {
+        'name': 1, 'mappings': 1, 'MAF': 1, 'ambiguity': 1, 'var_class': 1,
+        'synonyms': 1, 'evidence': 1, 'ancestral_allele': 1, 'minor_allele': 1,
+        'most_severe_consequence': 1
+    }))
 
-    return render_template('search.html', variant=variant)
+    return render_template('search.html', variants=variants)
