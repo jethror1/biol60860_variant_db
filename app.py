@@ -1,5 +1,11 @@
 from flask import Flask, render_template
+from flask_pymongo import PyMongo
+
+
 app = Flask(__name__)
+
+app.config["MONGO_URI"] = "mongodb://localhost:27017/manchester2021"
+mongo = PyMongo(app)
 
 
 @app.route('/')
@@ -17,4 +23,6 @@ def upload():
 @app.route('/search')
 def search():
     """Page for searching database"""
-    return render_template('search.html')
+    variant = mongo.db.variants.find().count()
+
+    return render_template('search.html', variant=variant)
