@@ -4,8 +4,20 @@
 
 {% block body_block %}
 
+<p>Please upload a json file</p>
+
 <html>
-    Bulk upload page
+    <body>
+        <form method=POST enctype=multipart/form-data>
+            <input type=file name=file>
+            <input type=submit value=Upload>
+        </form>
+
+        {% for mesg in get_flashed_messages() %}
+      <h1>{{ mesg }}</h1>
+      {% endfor %}
+    </body>
+   
 </html>
 
 {% endblock %}
