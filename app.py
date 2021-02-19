@@ -109,7 +109,7 @@ class VariantForm(FlaskForm):
             (False, "------ SELECT CHROMOSOME ------"),
             ("1", "chr1"), ("2", "chr2"), ("3", "chr3"),
             ("4", "chr4"), ("5", "chr5"), ("6", "chr6"),
-            ("7", "chr7"), ("8", "chr8"), ("9", "chr8"),
+            ("7", "chr7"), ("8", "chr8"), ("9", "chr9"),
             ("10", "chr10"), ("11", "chr11"), ("12", "chr12"),
             ("13", "chr13"), ("14", "chr14"), ("15", "chr15"),
             ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
@@ -215,8 +215,6 @@ def bulk_upload():
             newgenes = bulk_variants(data)
 
             return render_template('bulk_result.html', result = newgenes)
-            # print(newgenes.inserted_ids)
-            # return redirect(url_for('uploaded_file', filename=filename))
         else:
             flash('Please submit a json file')
 
@@ -245,7 +243,7 @@ class SearchForm(FlaskForm):
             (False, "------ SELECT CHROMOSOME ------"),
             ("1", "chr1"), ("2", "chr2"), ("3", "chr3"),
             ("4", "chr4"), ("5", "chr5"), ("6", "chr6"),
-            ("7", "chr7"), ("8", "chr8"), ("9", "chr8"),
+            ("7", "chr7"), ("8", "chr8"), ("9", "chr9"),
             ("10", "chr10"), ("11", "chr11"), ("12", "chr12"),
             ("13", "chr13"), ("14", "chr14"), ("15", "chr15"),
             ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
@@ -293,11 +291,27 @@ def search():
         }
         query_dict = {}
 
+        # human readable searches to display in template
+        terms = []
+
         # build dict to search with from passed fields
         for key, val in search_dict.items():
             for k, v in val.items():
                 if v is not None and '-' not in str(v) and v != '':
                     query_dict[key] = val
+                    if isinstance(v, list):
+                        # some are lists of 1 element
+                        v = v[0]
+                    terms.append(f"{key}: {v}")
+
+        # gross mess to format nicely for viewing
+        terms = [
+            x.replace('_', ' ').replace(
+                'mappings.', '').replace('seq region name', 'chromosome'
+            ).replace('_', ' ') for x in terms
+        ]
+
+        print(terms)
 
         # query database
         result = list(
@@ -315,6 +329,7 @@ def search():
             # build dict with formatting to pass to template
             var = defaultdict(int, var)
             var_dict = defaultdict(None)
+
             var_dict['name'] = var['name']
             var_dict['GRCh38'] = [
                 x['location']
@@ -325,17 +340,27 @@ def search():
             var_dict['ambiguity'] = var['ambiguity']
             var_dict['var_class'] = var['var_class']
             var_dict['synonyms'] = '; '.join([str(x) for x in var['synonyms']])
-            var_dict['evidence'] = '; '.join([str(x) for x in var['evidence']])
+            var_dict['evidence'] = '; '.join(
+                [str(x).replace('_', ' ') for x in var['evidence']]
+            )
             var_dict['ancestral_allele'] = var['ancestral_allele']
             var_dict['minor_allele'] = var['minor_allele']
-            var_dict['most_severe_consequence'] = var['most_severe_consequence']
-            var_dict['clinical_significance'] = "; ".join(
-                [str(x) for x in var['clinical_significance']]
-            )
+            var_dict['most_severe_consequence'] = var['most_severe_consequence'].replace('_', ' ')
+
+            if 'clinical_significance' in var_dict.keys():
+                var_dict['clinical_significance'] = "; ".join(
+                    [str(x).capitalize() for x in var['clinical_significance']]
+                )
+            else:
+                var_dict['clinical_significance'] = None
 
             variants.append(var_dict)
 
-        return render_template('search_results.html', variants=variants)
+        total = len(variants)
+
+        return render_template(
+            'search_results.html', variants=variants, terms=terms, total=total
+        )
 
     # render empty form
     return render_template('search.html', form=form)

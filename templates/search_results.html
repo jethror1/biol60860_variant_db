@@ -5,6 +5,18 @@
 {% block body_block %}
 
 <div style="padding: 100px;">
+
+    <div style="font-size: 20px; font-weight: 300;">
+        Search terms used:<br>
+        <div style="padding-left: 40px;">
+            {% for term in terms %}
+                <li><b>{{term}}</b></li>
+            {% endfor %}
+        </div>
+        <br>
+        Total variants found: <b>{{total}}</b>
+        <br></br>
+    </div>
     <table id="variant_table" class="display">
         <thead>
             <th>Name</th>
@@ -12,12 +24,12 @@
             <th>MAF</th>
             <th>Ambiguity</th>
             <th>Class</th>
-            <th>Synonyms</th>
-            <th>Evidence</th>
+            <th style="width: 12%;">Synonyms</th>
+            <th style="width: 12%;">Evidence</th>
             <th>Ancestral allele</th>
             <th>Minor allele</th>
             <th>Consequence</th>
-            <th>Clin Sig</th>
+            <th>Clinical Significance</th>
         </thead>
         <tbody>
             {% for var in variants %}
