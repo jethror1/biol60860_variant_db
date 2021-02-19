@@ -41,15 +41,17 @@ On searching, the database is queried and matching variants presented in a table
 
 A form is presented in which users are able to enter data into set fields. This data is then saved to the databased upon the execution of the "Submit" button. 
 
-If successful the user is redirected to a page notifying them of the successful upload which also displays the fields uploaded. If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will instead be redirected to a page notifying them of this error.
+If successful the user is redirected to a page notifying them of the successful upload which also displays the fields uploaded. All new uploads will be stamped with the follwoing additional fields:
+
+- Source as "User Uplaod - Single Variant"
+- DateTime of upload
+
+If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will  be redirected back to the variant upload page and a notification will be returned to the user of this error.
 
 
-![upload form](/static/images/uploadFormComplete.png)
-![upload success](/static/images/uploadSuccessful.png)
-![upload error](/static/images/uploadErrorDuplicate.png)
-<!-- ![upload form](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/uploadFormComplete.png) -->
-<!-- ![upload success](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/uploadSuccessful.png)
-![upload error](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/uploadErrorDuplicate.png) -->
+![upload form](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/uploadFormComplete.png)
+![upload success](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/uploadSuccessful.png)
+![upload error](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/uploadErrorDuplicate.png)
 
 
 ### Bulk Variant Upload (via JSON File)
