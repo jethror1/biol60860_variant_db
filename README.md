@@ -15,6 +15,18 @@ Variant database created with MongoDB and Flask as part of BIOL60860 IT for Adva
 
 A MongoDB NoSQL database of genomic variants accompanied by a user interface designed within the flask micro web framework.
 
+## Requirements
+
+Python requirements are specified in `requirements.txt` and may be installed with `pip`.
+A mongo database is also required, both secret key and uri need to be specified in `config.py`.
+
+## Usage
+Once the requirements have been set, the server may be started with:
+```
+export FLASK_APP=app.py
+flask run
+```
+
 ## Current Features
 
 ### Search
