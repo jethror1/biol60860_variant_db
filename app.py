@@ -169,8 +169,10 @@ def single_upload():
         name = form.name.data
         ds = stop_duplicates(name.lower())
         if ds:
-            message = "That variant is already in our database."
-            return render_template('singleDuplicate.html', name=name, message=message)
+            flash('{} is already in our database.'.format(name))
+            return render_template('single_upload.html', form=form)
+            # message = "That variant is already in our database."
+            # return render_template('singleDuplicate.html', name=name, message=message)
         else:
             location = "{}:{}-{}".format(form.chromosome.data, str(form.start.data), str(form.end.data))
             mongo.db.variants.insert_one(
