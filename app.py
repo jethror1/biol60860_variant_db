@@ -55,17 +55,17 @@ def get_names(source):
     return sorted(names)
 
 
-def get_id(source, name):
-    for row in source:
-        # lower() makes the string all lowercase
-        if name.lower() == row["name"].lower():
-            id = row["_id"]
-            # change number to string
-            id = str(id)
-            # return id if name is valid
-            return id
-    # return these if id is not valid - not a great solution, but simple
-    return "Unknown"
+# def get_id(source, name):
+#     for row in source:
+#         # lower() makes the string all lowercase
+#         if name.lower() == row["name"].lower():
+#             id = row["_id"]
+#             # change number to string
+#             id = str(id)
+#             # return id if name is valid
+#             return id
+#     # return these if id is not valid - not a great solution, but simple
+#     return "Unknown"
 
 
 class VariantForm(FlaskForm):
@@ -82,36 +82,19 @@ class VariantForm(FlaskForm):
     # chromosome = SelectField("Chromosome", choices=CHROMOSOMES)
 
     chromosome = SelectField(
-        'Chromosome?',
+        'Chromosome',
         choices=[
             (False, "------ SELECT CHROMOSOME ------"),
-            ("1", "chr1"),
-            ("2", "chr2"),
-            ("3", "chr3"),
-            ("4", "chr4"),
-            ("5", "chr5"),
-            ("6", "chr6"),
-            ("7", "chr7"),
-            ("8", "chr8"),
-            ("9", "chr8"),
-            ("10", "chr10"),
-            ("11", "chr11"),
-            ("12", "chr12"),
-            ("13", "chr13"),
-            ("14", "chr14"),
-            ("15", "chr15"),
-            ("16", "chr16"),
-            ("17", "chr17"),
-            ("18", "chr18"),
-            ("19", "chr19"),
-            ("20", "chr20"),
-            ("21", "chr21"),
-            ("22", "chr22"),
-            ("X", "chrX"),
-            ("Y", "chrY"),
+            ("1", "chr1"), ("2", "chr2"), ("3", "chr3"),
+            ("4", "chr4"), ("5", "chr5"), ("6", "chr6"),
+            ("7", "chr7"), ("8", "chr8"), ("9", "chr8"),
+            ("10", "chr10"), ("11", "chr11"), ("12", "chr12"),
+            ("13", "chr13"), ("14", "chr14"), ("15", "chr15"),
+            ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
+            ("19", "chr19"), ("20", "chr20"), ("21", "chr21"),
+            ("22", "chr22"), ("X", "chrX"), ("Y", "chrY"),
         ]
     )
-    # chromosome = StringField('Chromosome?')
 
     start = IntegerField('Start Coord?', validators=[validators.data_required()])
     end = IntegerField('End Coord?', validators=[validators.data_required()])
@@ -128,7 +111,7 @@ class VariantForm(FlaskForm):
     # NUCLEOTIDES = [y for y in zip(nucleotideChoices,nucleotideChoices)]
     # NUCLEOTIDES.insert(0,(False, "------ SELECT NUCLEOTIDE ------"))
     ancestralAllele = StringField('Wild Type', validators=[validators.data_required()])
-    minorAllele = StringField('Variant Allele', validators=[validators.data_required()])
+    minorAllele = StringField('Variant', validators=[validators.data_required()])
     # minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
 
     significance = SelectField("significance of Variant", choices = [
@@ -165,20 +148,24 @@ def single_upload():
             message = "That variant is already in our database."
             return render_template('singleDuplicate.html', name=name, message=message)
         else:
+            location = "{}:{}-{}".format(form.chromosome.data, str(form.start.data), str(form.end.data))
             mongo.db.variants.insert_one(
                 {
                     "name":form.name.data,
                     "variantType":form.variantType.data,
-                    "chromosome":form.chromosome.data,
-                    "start":form.start.data,
-                    "end":form.end.data,
+                    "mappings": [{
+                        "seq_region_name":form.chromosome.data,
+                        "start":form.start.data,
+                        "end":form.end.data,
+                        "location":location,
+                    }],
                     "ancestral_allele":form.ancestralAllele.data,
                     "minor_allele":form.minorAllele.data,
                     "clinical_significance":form.significance.data,
                     }
             ).inserted_id
             variant = mongo.db.variants.find_one({"name":form.name.data})
-            return render_template('singleSuccessful.html',  variant=variant, names=names, name=name)
+            return render_template('singleSuccessful.html', name=name, variant=variant)
     return render_template('single_upload.html', form=form)
 
 
