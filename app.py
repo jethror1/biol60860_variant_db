@@ -71,16 +71,17 @@ def get_id(source, name):
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
-    TYPE = [
-        (False, "------ SELECT TYPE ------"),
-        ("SNP", "SNP"),
-        ("Deletion", "Deletion"),
-        ("Insertion", "Insertion"),
-        ("Repeat", "Repeat"),
-        ("Substitution", "Substitution"),
-        ("InDel", "InDel"),
-    ]
+
+    typeChoices = mongo.db.variants.distinct("var_class")
+    TYPE = [y for y in zip(typeChoices,typeChoices)]
+    TYPE.insert(0,(False, "------ SELECT TYPE ------"))
     variantType = SelectField("Type of Variant", choices=TYPE)
+
+    # chromosomeChoices = mongo.db.variants.distinct("mappings.seq_region_name")
+    # CHROMOSOMES = [y for y in zip(chromosomeChoices,chromosomeChoices)]
+    # CHROMOSOMES.insert(0,(False, "------ SELECT CHROMOSOME ------"))
+    # chromosome = SelectField("Chromosome", choices=CHROMOSOMES)
+
     chromosome = SelectField(
         'Chromosome?',
         choices=[
@@ -112,18 +113,25 @@ class VariantForm(FlaskForm):
         ]
     )
     # chromosome = StringField('Chromosome?')
+
     start = IntegerField('Start Coord?', validators=[validators.data_required()])
     end = IntegerField('End Coord?', validators=[validators.data_required()])
-    NUCLEOTIDES = [
-        (False, "------ SELECT NUCLEOTIDE ------"),
-        ("Null", "Null"),
-        ("G","G"),
-        ("A","A"),
-        ("C","C"),
-        ("T","T"),
-    ]
-    ancestralAllele = SelectField("Wild Type", choices = NUCLEOTIDES)
-    minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
+
+    # NUCLEOTIDES = [
+    #     (False, "------ SELECT NUCLEOTIDE ------"),
+    #     ("Null", "Null"),
+    #     ("G","G"),
+    #     ("A","A"),
+    #     ("C","C"),
+    #     ("T","T"),
+    # ]
+    # nucleotideChoices = mongo.db.variants.distinct("minor_allele")
+    # NUCLEOTIDES = [y for y in zip(nucleotideChoices,nucleotideChoices)]
+    # NUCLEOTIDES.insert(0,(False, "------ SELECT NUCLEOTIDE ------"))
+    ancestralAllele = StringField('Wild Type', validators=[validators.data_required()])
+    minorAllele = StringField('Variant Allele', validators=[validators.data_required()])
+    # minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
+
     significance = SelectField("significance of Variant", choices = [
         (False, "------ SELECT SIGNIFICANCE ------"),
         ("Benign", "Benign"),
