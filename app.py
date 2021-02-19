@@ -140,9 +140,6 @@ def home():
     """Main home page for navigation"""
     total_vars = variants = mongo.db.variants.find({}).count()
 
-    # this = [x.keys() for x in mongo.db.variants.find({})]
-    # this = list(set([i for sub in this for i in sub]))
-    # print(this)
     return render_template('home.html', total_vars=total_vars)
 
 
@@ -162,10 +159,10 @@ def single_upload():
         else:
             mongo.db.variants.insert_one(
                 {
-                    "name":form.name.data, 
-                    "variantType":form.variantType.data, 
-                    "chromosome":form.chromosome.data, 
-                    "start":form.start.data, 
+                    "name":form.name.data,
+                    "variantType":form.variantType.data,
+                    "chromosome":form.chromosome.data,
+                    "start":form.start.data,
                     "end":form.end.data,
                     "ancestral_allele":form.ancestralAllele.data,
                     "minor_allele":form.minorAllele.data,
@@ -182,10 +179,10 @@ def bulk_upload():
     """Page for uploading bulk json data to database"""
 
     if request.method == 'POST':
-        if 'file' not in request.files: #check for a file
+        if 'file' not in request.files:  # check for a file
             flash('No file part')
             return redirect(request.url)
-        file = request.files['file'] #check a file has been selected
+        file = request.files['file']  # check a file has been selected
         if file.filename == "":
             flash('No selected file')
             return redirect(request.url)
