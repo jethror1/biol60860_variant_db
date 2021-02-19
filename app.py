@@ -1,6 +1,7 @@
 from collections import defaultdict
 import os
 import json
+import datetime
 
 from flask import (
     Flask, flash, session, request, url_for, redirect,
@@ -148,6 +149,7 @@ def home():
 
 @app.route('/single_upload', methods=['GET', 'POST'])
 def single_upload():
+    currentDateTime = datetime.datetime.now().strftime("%m/%d/%Y_%H:%M")
     DATA = list(mongo.db.variants.find({}))
     names = get_names(DATA)
     # you must tell the variable 'form' what you named the class, above
@@ -164,7 +166,7 @@ def single_upload():
             mongo.db.variants.insert_one(
                 {
                     "name":form.name.data,
-                    "variantType":form.variantType.data,
+                    "var_class":form.variantType.data,
                     "mappings": [{
                         "seq_region_name":form.chromosome.data,
                         "start":form.start.data,
@@ -174,6 +176,7 @@ def single_upload():
                     "ancestral_allele":form.ancestralAllele.data,
                     "minor_allele":form.minorAllele.data,
                     "clinical_significance":form.significance.data,
+                    "date_time_uploaded":currentDateTime,
                     }
             ).inserted_id
             variant = mongo.db.variants.find_one({"name":form.name.data})

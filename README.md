@@ -9,7 +9,7 @@ Variant database created with MongoDB and Flask as part of BIOL60860 IT for Adva
 - Jethro Rainford
 - Fern Johnson
 
-![Variant Database](/static/images/variantDb.png)
+![Variant Database](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/variantDb.png)
 
 ## Description
 
@@ -19,16 +19,11 @@ A MongoDB NoSQL database of genomic variants accompanied by a user interface des
 
 ### Search
 
-A search form is provided for searching for variants via name, chromosome, position(s), reference build and clinical significance.
-On submitting the form the database is queried, and matching variants are returned and displayed in a table.
-
-### Single Variant upload
+### Single Variant Upload
 
 A form is presented in which users are able to enter data into set fields. This data is then saved to the databased upon the execution of the "Submit" button. 
 
-If successful the user is redirected to a page notifying them of the successful upload, and which also displays the fields uploaded
-
-If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will instead be redirected to a page notifying them of the error.
+If successful the user is redirected to a page notifying them of the successful upload which also displays the fields uploaded. If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will instead be redirected to a page notifying them of this error.
 
 ### Bulk Variant Upload (via JSON File)
 
@@ -37,7 +32,9 @@ After upload the user is directed to a page with a list of results for the submi
 
 ## Future Work
 
-
+- Dynamic table of reseults from search query
+- Option to review data before it is submitted
+- Option to select differnt file types for bulk variant upload (.vcf, .json ...)
 
 [python-image]: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
 [python-url]: https://www.python.org/
