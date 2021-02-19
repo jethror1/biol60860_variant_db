@@ -299,7 +299,7 @@ def search():
             x.replace('_', ' ').replace(
                 'mappings.', '').replace('seq region name', 'chromosome'
             ).replace('_', ' ') for x in terms
-            ]
+        ]
 
         print(terms)
 
@@ -319,6 +319,7 @@ def search():
             # build dict with formatting to pass to template
             var = defaultdict(int, var)
             var_dict = defaultdict(None)
+
             var_dict['name'] = var['name']
             var_dict['GRCh38'] = [
                 x['location']
@@ -329,13 +330,19 @@ def search():
             var_dict['ambiguity'] = var['ambiguity']
             var_dict['var_class'] = var['var_class']
             var_dict['synonyms'] = '; '.join([str(x) for x in var['synonyms']])
-            var_dict['evidence'] = '; '.join([str(x) for x in var['evidence']])
+            var_dict['evidence'] = '; '.join(
+                [str(x).replace('_', ' ') for x in var['evidence']]
+            )
             var_dict['ancestral_allele'] = var['ancestral_allele']
             var_dict['minor_allele'] = var['minor_allele']
-            var_dict['most_severe_consequence'] = var['most_severe_consequence']
-            var_dict['clinical_significance'] = "; ".join(
-                [str(x) for x in var['clinical_significance']]
-            )
+            var_dict['most_severe_consequence'] = var['most_severe_consequence'].replace('_', ' ')
+
+            if 'clinical_significance' in var_dict.keys():
+                var_dict['clinical_significance'] = "; ".join(
+                    [str(x).capitalize() for x in var['clinical_significance']]
+                )
+            else:
+                var_dict['clinical_significance'] = None
 
             variants.append(var_dict)
 
