@@ -56,7 +56,7 @@ If successful the user is redirected to a page notifying them of the successful 
 
 Users can submit a JSON file of variants for bulk upload into the database.  
 ![bulk form](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/bulkuploadpage.PNG)
-![bulk file](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/bulkuploadpagefile.PNG)
+![bulk file](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/bulkuploadfile.PNG)
 
 After upload the user is directed to a page with a list of results for the submitted variants, either the ID of the newly created document is given, or the error message returned by the database if the upload of the variant was unsuccessful. 
 
