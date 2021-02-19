@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import json
 
@@ -217,13 +218,13 @@ def uploaded_file(filename):
 
 class SearchForm(FlaskForm):
     """Form fields for user searching database"""
-    name = StringField('Variant Name')
+    name = StringField('Variant Name', validators=[validators.Optional()])
     build = SelectField(
         'Reference Build',
         choices=[
             (False, "------ SELECT BUILD ------"),
             ('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')
-        ]
+        ], validators=[validators.Optional()]
     )
     chromosome = SelectField(
         'Chromosome',
@@ -237,10 +238,10 @@ class SearchForm(FlaskForm):
             ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
             ("19", "chr19"), ("20", "chr20"), ("21", "chr21"),
             ("22", "chr22"), ("X", "chrX"), ("Y", "chrY"),
-        ]
+        ], validators=[validators.Optional()]
     )
-    start = IntegerField('Start Coordinate')
-    end = IntegerField('End Coordinate')
+    start = IntegerField('Start Coordinate', validators=[validators.Optional()])
+    end = IntegerField('End Coordinate', validators=[validators.Optional()])
     significance = SelectField("Significance of Variant", choices=[
         (False, "------ SELECT SIGNIFICANCE ------"),
         ("Benign", "Benign"),
@@ -248,25 +249,75 @@ class SearchForm(FlaskForm):
         ("Variant of Unknown Significance", "Variant of Unknown Significance"),
         ("Likely Pathogenic", "Likely Pathogenic"),
         ("Pathogenic", "Pathogenic"),
-    ])
+    ], validators=[validators.Optional()])
     submit = SubmitField('Submit')
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search():
     """Page for searching database"""
     form = SearchForm()
 
-    # Need to check form, do some validation somehow then query db with this
-    # then return results to search_results template
+    if form.submit.data:
+        # form submitted
 
-    variants = list(mongo.db.variants.find({}, {
-        'name': 1, 'mappings': 1, 'MAF': 1, 'ambiguity': 1, 'var_class': 1,
-        'synonyms': 1, 'evidence': 1, 'ancestral_allele': 1, 'minor_allele': 1,
-        'most_severe_consequence': 1, 'clinical_significance': 1
-    }))
+        if any([form.start.data, form.end.data, form.chromosome.data]):
+            if '-' in form.chromosome.data:
+                form.chromosome.data = None
 
-    return render_template('search.html', variants=variants, form=form)
+            if not form.chromosome.data and (form.start.data or form.end.data):
+                # missing chrom with start or end
+                return render_template('search.html', form=form)
+
+        search_dict = {
+            "name": {'$eq': form.name.data},
+            "mappings.seq_region_name": {'$eq': form.chromosome.data},
+            "mappings.start": {'$gte': form.start.data},
+            "mappings.end": {'$lte': form.end.data},
+            "clinical_significance": {'$eq': form.significance.data},
+            "mappings.assembly_name": {'$eq': form.build.data}
+        }
+        query_dict = {}
+
+        # build dict to search with from passed fields
+        for key, val in search_dict.items():
+            for k, v in val.items():
+                if v is not None and '-' not in str(v) and v != '':
+                    query_dict[key] = val
+
+        result = list(
+            mongo.db.variants.find(query_dict, {
+                'name': 1, 'mappings': 1, 'MAF': 1, 'ambiguity': 1,
+                'var_class': 1, 'synonyms': 1, 'evidence': 1,
+                'ancestral_allele': 1, 'minor_allele': 1,
+                'most_severe_consequence': 1, 'clinical_significance': 1
+            })
+        )
+
+        variants = []
+
+        for var in result:
+            var = defaultdict(int, var)
+            var_dict = defaultdict(None)
+
+            var_dict['name'] = var['name']
+            var_dict['GRCh38'] = [x['location'] for x in var['mappings'] if x['assembly_name'] == 'GRCh38'][0]
+            var_dict['MAF'] = var['MAF']
+            var_dict['ambiguity'] = var['ambiguity']
+            var_dict['var_class'] = var['var_class']
+            var_dict['synonyms'] = '; '.join([str(x) for x in var['synonyms']])
+            var_dict['evidence'] = '; '.join([str(x) for x in var['evidence']])
+            var_dict['ancestral_allele'] = var['ancestral_allele']
+            var_dict['minor_allele'] = var['minor_allele']
+            var_dict['most_severe_consequence'] = var['most_severe_consequence']
+            var_dict['clinical_significance'] = var['clinical_significance']
+
+            variants.append(var_dict)
+
+        return render_template('search_results.html', variants=variants)
+
+    # render empty form
+    return render_template('search.html', form=form)
 
 
 if __name__ == "__main__":
