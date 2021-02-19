@@ -38,9 +38,9 @@ After upload the user is directed to a page with a list of results for the submi
 
 ## Future Work
 
-- Dynamic table of reseults from search query
+- Dynamic table of results from search query
 - Option to review data before it is submitted
-- Option to select differnt file types for bulk variant upload (.vcf, .json ...)
+- Option to select different file types for bulk variant upload (.vcf, .json ...)
 
 [python-image]: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
 [python-url]: https://www.python.org/
