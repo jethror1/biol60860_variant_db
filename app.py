@@ -337,8 +337,9 @@ def search():
         variants = []
 
         for var in result:
+            print(var)
             # build dict with formatting to pass to template
-            var = defaultdict(int, var)
+            var = defaultdict(str, var)
             var_dict = defaultdict(None)
 
             var_dict['name'] = var['name']
@@ -351,7 +352,7 @@ def search():
                 x['location']
                 for x in var['mappings']
                 if x['assembly_name'] == 'GRCh38'
-            ][0]
+            ]
             var_dict['MAF'] = var['MAF']
             var_dict['ambiguity'] = var['ambiguity']
             var_dict['var_class'] = var['var_class']
@@ -364,9 +365,12 @@ def search():
             var_dict['most_severe_consequence'] = var['most_severe_consequence'].replace('_', ' ')
 
             if 'clinical_significance' in var.keys():
-                var_dict['clinical_significance'] = "; ".join(
-                        [str(x).capitalize() for x in var['clinical_significance']]
-                )
+                if isinstance(var['clinical_significance'], list):
+                    var_dict['clinical_significance'] = "; ".join(
+                            [str(x).capitalize() for x in var['clinical_significance']]
+                    )
+                else:
+                    var_dict['clinical_significance'] = var['clinical_significance']
             else:
                 var_dict['clinical_significance'] = None
 
