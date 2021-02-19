@@ -92,7 +92,13 @@ def stop_duplicates(n):
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
-
+    build = SelectField(
+        'Reference Build',
+        choices=[
+            (False, "------ SELECT BUILD ------"),
+            ('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')
+        ], validators=[validators.Optional()]
+    )
     typeChoices = mongo.db.variants.distinct("var_class")
     TYPE = [y for y in zip(typeChoices,typeChoices)]
     TYPE.insert(0,(False, "------ SELECT TYPE ------"))
@@ -177,9 +183,12 @@ def single_upload():
             location = "{}:{}-{}".format(form.chromosome.data, str(form.start.data), str(form.end.data))
             mongo.db.variants.insert_one(
                 {
+                    
+                    "source":"User Upload - Single Variant",
                     "name":form.name.data,
                     "var_class":form.variantType.data,
                     "mappings": [{
+                        "assembly_name":form.build.data,
                         "seq_region_name":form.chromosome.data,
                         "start":form.start.data,
                         "end":form.end.data,
