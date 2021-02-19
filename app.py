@@ -67,6 +67,18 @@ def get_id(source, name):
     # return these if id is not valid - not a great solution, but simple
     return "Unknown"
 
+def bulk_variants(data):
+    #there is an insert many function but it doesn't let you resolve individual uploads/failures
+    result = []
+    for j in data: 
+        try:
+            id=mongo.db.variants.insert_one(j)
+            result.append("Variant {0} inserted as {1}".format(j['name'], id.inserted_id))
+        except Exception as e:
+            result.append("Variant {0} failed upload: {1}".format(j['name'], e))
+            continue
+    return "\n".join(result)
+
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
@@ -192,7 +204,7 @@ def bulk_upload():
             return redirect(request.url)
         file = request.files['file']  # check a file has been selected
         if file.filename == "":
-            flash('No selected file')
+            flash('No file selected')
             return redirect(request.url)
         if file and allowed_file(file.filename):  # save the file
             filename = secure_filename(file.filename)
@@ -200,12 +212,15 @@ def bulk_upload():
             data = parse_json(
                 os.path.join(app.config['UPLOAD_FOLDER'], filename)
             )  # parse the json
-            newgenes = mongo.db.variants.insert_many(data)
+            newgenes = bulk_variants(data)
+            print(newgenes)
             flash('Upload successful!')
 
             return(redirect('/bulk_upload'))
             # print(newgenes.inserted_ids)
             # return redirect(url_for('uploaded_file', filename=filename))
+        else:
+            flash('Please submit a json file')
 
     return render_template('bulk_upload.html')
 
