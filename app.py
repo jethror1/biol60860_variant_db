@@ -280,15 +280,11 @@ def search():
         }
         query_dict = {}
 
-        print('search dict', search_dict)
-
         # build dict to search with from passed fields
         for key, val in search_dict.items():
             for k, v in val.items():
                 if v is not None and '-' not in str(v) and v != '':
                     query_dict[key] = val
-
-        print('query dict', query_dict)
 
         # query database
         result = list(
@@ -306,9 +302,12 @@ def search():
             # build dict with formatting to pass to template
             var = defaultdict(int, var)
             var_dict = defaultdict(None)
-            print(var)
             var_dict['name'] = var['name']
-            var_dict['GRCh38'] = [x['location'] for x in var['mappings'] if x['assembly_name'] == 'GRCh38'][0]
+            var_dict['GRCh38'] = [
+                x['location']
+                for x in var['mappings']
+                if x['assembly_name'] == 'GRCh38'
+            ][0]
             var_dict['MAF'] = var['MAF']
             var_dict['ambiguity'] = var['ambiguity']
             var_dict['var_class'] = var['var_class']
@@ -317,7 +316,9 @@ def search():
             var_dict['ancestral_allele'] = var['ancestral_allele']
             var_dict['minor_allele'] = var['minor_allele']
             var_dict['most_severe_consequence'] = var['most_severe_consequence']
-            var_dict['clinical_significance'] = "; ".join([str(x) for x in var['clinical_significance']])
+            var_dict['clinical_significance'] = "; ".join(
+                [str(x) for x in var['clinical_significance']]
+            )
 
             variants.append(var_dict)
 
