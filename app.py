@@ -205,8 +205,6 @@ def bulk_upload():
             newgenes = bulk_variants(data)
 
             return render_template('bulk_result.html', result = newgenes)
-            # print(newgenes.inserted_ids)
-            # return redirect(url_for('uploaded_file', filename=filename))
         else:
             flash('Please submit a json file')
 
@@ -296,10 +294,12 @@ def search():
                         v = v[0]
                     terms.append(f"{key}: {v}")
 
-        # terms = ' - '.join(terms).replace('_', ' ').replace('mappings.', '')
-        # terms = terms.replace('mappings.', '').replace('seq region name', 'chromosome').replace('_', ' ')
-
-        terms = [x.replace('_', ' ').replace('mappings.', '').replace('seq region name', 'chromosome').replace('_', ' ') for x in terms]
+        # gross mess to format nicely for viewing
+        terms = [
+            x.replace('_', ' ').replace(
+                'mappings.', '').replace('seq region name', 'chromosome'
+            ).replace('_', ' ') for x in terms
+            ]
 
         print(terms)
 

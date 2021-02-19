@@ -5,9 +5,9 @@ Variant database created with MongoDB and Flask as part of BIOL60860 IT for Adva
 
 ### Developers
 
-- Andrew Smith
-- Jethro Rainford
-- Fern Johnson
+- Andrew Smith (Fyodir)
+- Jethro Rainford (jethror1)
+- Fern Johnson (FernJohnson)
 
 ![Variant Database](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/variantDb.png)
 
