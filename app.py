@@ -73,11 +73,11 @@ def bulk_variants(data):
     for j in data: 
         try:
             id=mongo.db.variants.insert_one(j)
-            result.append("Variant {0} inserted as {1}".format(j['name'], id.inserted_id))
+            result.append("Variant {0} inserted as {1} \n".format(j['name'], id.inserted_id))
         except Exception as e:
-            result.append("Variant {0} failed upload: {1}".format(j['name'], e))
+            result.append("Variant {0} failed upload: {1} \n".format(j['name'], e))
             continue
-    return "\n".join(result)
+    return result
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
@@ -199,10 +199,8 @@ def bulk_upload():
                 os.path.join(app.config['UPLOAD_FOLDER'], filename)
             )  # parse the json
             newgenes = bulk_variants(data)
-            print(newgenes)
-            flash('Upload successful!')
 
-            return(redirect('/bulk_upload'))
+            return render_template('bulk_result.html', result = newgenes)
             # print(newgenes.inserted_ids)
             # return redirect(url_for('uploaded_file', filename=filename))
         else:
