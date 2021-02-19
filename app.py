@@ -29,7 +29,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
 Bootstrap(app)
 
-DATA = list(mongo.db.variants.find({}))
 
 
 def allowed_file(filename):
@@ -154,6 +153,7 @@ def home():
 
 @app.route('/single_upload', methods=['GET', 'POST'])
 def single_upload():
+    DATA = list(mongo.db.variants.find({}))
     names = get_names(DATA)
     # you must tell the variable 'form' what you named the class, above
     # 'form' is the variable name used in this template: index.html
@@ -178,8 +178,8 @@ def single_upload():
                     }
             ).inserted_id
             variant = mongo.db.variants.find_one({"name":form.name.data})
-            return render_template('singleSuccessful.html',  name=name, names=names, variant=variant)
-    return render_template('single_upload.html', names=names, form=form, message=message)
+            return render_template('singleSuccessful.html',  variant=variant, names=names, name=name)
+    return render_template('single_upload.html', form=form)
 
 
 @app.route('/bulk_upload', methods=['GET', 'POST'])
