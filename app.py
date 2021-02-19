@@ -361,6 +361,8 @@ def search():
             for k, v in var_dict.items():
                 if isinstance(v, list) and len(v) == 0:
                     var_dict[k] = None
+                if isinstance(v, list) and len(v) == 1:
+                    var_dict[k] = v[0]
 
             variants.append(var_dict)
 
