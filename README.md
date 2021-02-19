@@ -19,6 +19,12 @@ A MongoDB NoSQL database of genomic variants accompanied by a user interface des
 
 ### Search
 
+A form is presented for searching the database(shown below), this allows for searching for variants via name, reference build, position or clinical signficance.
+On searching, the database is queried and matching variants presented in a table.
+
+![search form](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/search_form_image.png)
+![search results](https://raw.githubusercontent.com/jethror1/biol60860_variant_db/dev/static/images/search_results_image.png)
+
 ### Single Variant Upload
 
 A form is presented in which users are able to enter data into set fields. This data is then saved to the databased upon the execution of the "Submit" button. 
