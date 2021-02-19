@@ -72,14 +72,23 @@ def get_names(source):
 def bulk_variants(data):
     #there is an insert many function but it doesn't let you resolve individual uploads/failures
     result = []
-    for j in data: 
-        try:
-            id=mongo.db.variants.insert_one(j)
-            result.append("Variant {0} inserted as {1} \n".format(j['name'], id.inserted_id))
-        except Exception as e:
-            result.append("Variant {0} failed upload: {1} \n".format(j['name'], e))
-            continue
+    for j in data:
+        
+        qr = stop_duplicates(j['name'])
+        if qr:
+            result.append("Variant {0} already present in data with ID {1}".format(j['name'], qr['_id']))
+        else:
+            try:
+                id=mongo.db.variants.insert_one(j)
+                result.append("Variant {0} inserted as {1}".format(j['name'], id.inserted_id))
+            except Exception as e:
+                result.append("Variant {0} failed upload: {1}".format(j['name'], e))
+                
     return result
+
+def stop_duplicates(n):
+    hit = mongo.db.variants.find_one({"name": n})
+    return hit 
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
@@ -150,15 +159,16 @@ def home():
 @app.route('/single_upload', methods=['GET', 'POST'])
 def single_upload():
     currentDateTime = datetime.datetime.now().strftime("%m/%d/%Y_%H:%M")
-    DATA = list(mongo.db.variants.find({}))
-    names = get_names(DATA)
+    #DATA = list(mongo.db.variants.find({}))
+    #names = get_names(DATA)
     # you must tell the variable 'form' what you named the class, above
     # 'form' is the variable name used in this template: index.html
     form = VariantForm()
     message = ""
     if form.validate_on_submit():
         name = form.name.data
-        if name.lower() in names:
+        ds = stop_duplicates(name.lower())
+        if ds:
             message = "That variant is already in our database."
             return render_template('singleDuplicate.html', name=name, message=message)
         else:
