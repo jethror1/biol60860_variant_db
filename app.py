@@ -97,17 +97,12 @@ class VariantForm(FlaskForm):
         choices=[
             (False, "------ SELECT BUILD ------"),
             ('GRCh37', 'GRCh37'), ('GRCh38', 'GRCh38')
-        ], validators=[validators.Optional()]
+        ], validators=[validators.data_required()]
     )
     typeChoices = mongo.db.variants.distinct("var_class")
     TYPE = [y for y in zip(typeChoices,typeChoices)]
     TYPE.insert(0,(False, "------ SELECT TYPE ------"))
-    variantType = SelectField("Type of Variant", choices=TYPE)
-
-    # chromosomeChoices = mongo.db.variants.distinct("mappings.seq_region_name")
-    # CHROMOSOMES = [y for y in zip(chromosomeChoices,chromosomeChoices)]
-    # CHROMOSOMES.insert(0,(False, "------ SELECT CHROMOSOME ------"))
-    # chromosome = SelectField("Chromosome", choices=CHROMOSOMES)
+    variantType = SelectField("Type of Variant", choices=TYPE, validators=[validators.data_required()])
 
     chromosome = SelectField(
         'Chromosome',
@@ -121,26 +116,13 @@ class VariantForm(FlaskForm):
             ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
             ("19", "chr19"), ("20", "chr20"), ("21", "chr21"),
             ("22", "chr22"), ("X", "chrX"), ("Y", "chrY"),
-        ]
+        ], validators=[validators.data_required()]
     )
-
     start = IntegerField('Start Coord?', validators=[validators.data_required()])
     end = IntegerField('End Coord?', validators=[validators.data_required()])
 
-    # NUCLEOTIDES = [
-    #     (False, "------ SELECT NUCLEOTIDE ------"),
-    #     ("Null", "Null"),
-    #     ("G","G"),
-    #     ("A","A"),
-    #     ("C","C"),
-    #     ("T","T"),
-    # ]
-    # nucleotideChoices = mongo.db.variants.distinct("minor_allele")
-    # NUCLEOTIDES = [y for y in zip(nucleotideChoices,nucleotideChoices)]
-    # NUCLEOTIDES.insert(0,(False, "------ SELECT NUCLEOTIDE ------"))
     ancestralAllele = StringField('Wild Type', validators=[validators.data_required()])
     minorAllele = StringField('Variant', validators=[validators.data_required()])
-    # minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
 
     significance = SelectField("significance of Variant", choices = [
         (False, "------ SELECT SIGNIFICANCE ------"),
@@ -149,7 +131,8 @@ class VariantForm(FlaskForm):
         ("Variant of Unknown Significance", "Variant of Unknown Significance"),
         ("Likely Pathogenic", "Likely Pathogenic"),
         ("Pathogenic", "Pathogenic"),
-    ])
+    ], validators=[validators.data_required()])
+    
     submit = SubmitField('Submit')
 
 
