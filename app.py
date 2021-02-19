@@ -81,6 +81,7 @@ def bulk_variants(data):
             continue
     return result
 
+
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
 
@@ -321,6 +322,11 @@ def search():
             var_dict = defaultdict(None)
 
             var_dict['name'] = var['name']
+            var_dict['GRCh37'] = [
+                x['location']
+                for x in var['mappings']
+                if x['assembly_name'] == 'GRCh37'
+            ]
             var_dict['GRCh38'] = [
                 x['location']
                 for x in var['mappings']
@@ -337,12 +343,16 @@ def search():
             var_dict['minor_allele'] = var['minor_allele']
             var_dict['most_severe_consequence'] = var['most_severe_consequence'].replace('_', ' ')
 
-            if 'clinical_significance' in var_dict.keys():
+            if 'clinical_significance' in var.keys():
                 var_dict['clinical_significance'] = "; ".join(
-                    [str(x).capitalize() for x in var['clinical_significance']]
+                        [str(x).capitalize() for x in var['clinical_significance']]
                 )
             else:
                 var_dict['clinical_significance'] = None
+
+            for k, v in var_dict.items():
+                if isinstance(v, list) and len(v) == 0:
+                    var_dict[k] = None
 
             variants.append(var_dict)
 

@@ -20,6 +20,7 @@
     <table id="variant_table" class="display">
         <thead>
             <th>Name</th>
+            <th>GRCh37</th>
             <th>GRCh38</th>
             <th>MAF</th>
             <th>Ambiguity</th>
@@ -35,6 +36,7 @@
             {% for var in variants %}
             <tr>
                 <td>{{var.name}}</td>
+                <td>{{var.GRCh37}}</td>
                 <td>{{var.GRCh38}}</td>
                 <td>{{var.MAF}}</td>
                 <td>{{var.ambiguity}}</td>
