@@ -79,7 +79,6 @@ def bulk_variants(data):
             continue
     return "\n".join(result)
 
-
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
 
