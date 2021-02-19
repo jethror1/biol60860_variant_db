@@ -19,13 +19,16 @@ A MongoDB NoSQL database of genomic variants accompanied by a user interface des
 
 ### Search
 
+A search form is provided for searching for variants via name, chromosome, position(s), reference build and clinical significance.
+On submitting the form the database is queried, and matching variants are returned and displayed in a table.
+
 ### Single Variant upload
 
 A form is presented in which users are able to enter data into set fields. This data is then saved to the databased upon the execution of the "Submit" button. 
 
 If successful the user is redirected to a page notifying them of the successful upload, and which also displays the fields uploaded
 
-If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will instead be redirected to a page notifying them of theis error.
+If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will instead be redirected to a page notifying them of the error.
 
 ### Bulk Variant Upload (via JSON File)
 
