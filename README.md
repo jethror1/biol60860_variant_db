@@ -9,7 +9,7 @@ Variant database created with MongoDB and Flask as part of BIOL60860 IT for Adva
 - Jethro Rainford
 - Fern Johnson
 
-![Variant Database](/static/variantDb.jpg)
+![Variant Database](static/variantDb.jpg)
 
 ## Description
 
