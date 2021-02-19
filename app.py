@@ -30,7 +30,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
 Bootstrap(app)
 
-DATA = list(mongo.db.variants.find({}))
 
 
 def allowed_file(filename):
@@ -57,18 +56,29 @@ def get_names(source):
     return sorted(names)
 
 
-def get_id(source, name):
-    for row in source:
-        # lower() makes the string all lowercase
-        if name.lower() == row["name"].lower():
-            id = row["_id"]
-            # change number to string
-            id = str(id)
-            # return id if name is valid
-            return id
-    # return these if id is not valid - not a great solution, but simple
-    return "Unknown"
+# def get_id(source, name):
+#     for row in source:
+#         # lower() makes the string all lowercase
+#         if name.lower() == row["name"].lower():
+#             id = row["_id"]
+#             # change number to string
+#             id = str(id)
+#             # return id if name is valid
+#             return id
+#     # return these if id is not valid - not a great solution, but simple
+#     return "Unknown"
 
+def bulk_variants(data):
+    #there is an insert many function but it doesn't let you resolve individual uploads/failures
+    result = []
+    for j in data: 
+        try:
+            id=mongo.db.variants.insert_one(j)
+            result.append("Variant {0} inserted as {1} \n".format(j['name'], id.inserted_id))
+        except Exception as e:
+            result.append("Variant {0} failed upload: {1} \n".format(j['name'], e))
+            continue
+    return result
 
 class VariantForm(FlaskForm):
     name = StringField('Variant Name?', validators=[validators.data_required()])
@@ -84,36 +94,19 @@ class VariantForm(FlaskForm):
     # chromosome = SelectField("Chromosome", choices=CHROMOSOMES)
 
     chromosome = SelectField(
-        'Chromosome?',
+        'Chromosome',
         choices=[
             (False, "------ SELECT CHROMOSOME ------"),
-            ("1", "chr1"),
-            ("2", "chr2"),
-            ("3", "chr3"),
-            ("4", "chr4"),
-            ("5", "chr5"),
-            ("6", "chr6"),
-            ("7", "chr7"),
-            ("8", "chr8"),
-            ("9", "chr8"),
-            ("10", "chr10"),
-            ("11", "chr11"),
-            ("12", "chr12"),
-            ("13", "chr13"),
-            ("14", "chr14"),
-            ("15", "chr15"),
-            ("16", "chr16"),
-            ("17", "chr17"),
-            ("18", "chr18"),
-            ("19", "chr19"),
-            ("20", "chr20"),
-            ("21", "chr21"),
-            ("22", "chr22"),
-            ("X", "chrX"),
-            ("Y", "chrY"),
+            ("1", "chr1"), ("2", "chr2"), ("3", "chr3"),
+            ("4", "chr4"), ("5", "chr5"), ("6", "chr6"),
+            ("7", "chr7"), ("8", "chr8"), ("9", "chr8"),
+            ("10", "chr10"), ("11", "chr11"), ("12", "chr12"),
+            ("13", "chr13"), ("14", "chr14"), ("15", "chr15"),
+            ("16", "chr16"), ("17", "chr17"), ("18", "chr18"),
+            ("19", "chr19"), ("20", "chr20"), ("21", "chr21"),
+            ("22", "chr22"), ("X", "chrX"), ("Y", "chrY"),
         ]
     )
-    # chromosome = StringField('Chromosome?')
 
     start = IntegerField('Start Coord?', validators=[validators.data_required()])
     end = IntegerField('End Coord?', validators=[validators.data_required()])
@@ -130,7 +123,7 @@ class VariantForm(FlaskForm):
     # NUCLEOTIDES = [y for y in zip(nucleotideChoices,nucleotideChoices)]
     # NUCLEOTIDES.insert(0,(False, "------ SELECT NUCLEOTIDE ------"))
     ancestralAllele = StringField('Wild Type', validators=[validators.data_required()])
-    minorAllele = StringField('Variant Allele', validators=[validators.data_required()])
+    minorAllele = StringField('Variant', validators=[validators.data_required()])
     # minorAllele = SelectField("Variant", choices = NUCLEOTIDES)
 
     significance = SelectField("significance of Variant", choices = [
@@ -155,6 +148,7 @@ def home():
 
 @app.route('/single_upload', methods=['GET', 'POST'])
 def single_upload():
+    DATA = list(mongo.db.variants.find({}))
     names = get_names(DATA)
     # you must tell the variable 'form' what you named the class, above
     # 'form' is the variable name used in this template: index.html
@@ -166,21 +160,25 @@ def single_upload():
             message = "That variant is already in our database."
             return render_template('singleDuplicate.html', name=name, message=message)
         else:
+            location = "{}:{}-{}".format(form.chromosome.data, str(form.start.data), str(form.end.data))
             mongo.db.variants.insert_one(
                 {
                     "name":form.name.data,
                     "variantType":form.variantType.data,
-                    "chromosome":form.chromosome.data,
-                    "start":form.start.data,
-                    "end":form.end.data,
+                    "mappings": [{
+                        "seq_region_name":form.chromosome.data,
+                        "start":form.start.data,
+                        "end":form.end.data,
+                        "location":location,
+                    }],
                     "ancestral_allele":form.ancestralAllele.data,
                     "minor_allele":form.minorAllele.data,
                     "clinical_significance":form.significance.data,
                     }
             ).inserted_id
             variant = mongo.db.variants.find_one({"name":form.name.data})
-            return render_template('singleSuccessful.html',  name=name, names=names, variant=variant)
-    return render_template('single_upload.html', names=names, form=form, message=message)
+            return render_template('singleSuccessful.html', name=name, variant=variant)
+    return render_template('single_upload.html', form=form)
 
 
 @app.route('/bulk_upload', methods=['GET', 'POST'])
@@ -193,7 +191,7 @@ def bulk_upload():
             return redirect(request.url)
         file = request.files['file']  # check a file has been selected
         if file.filename == "":
-            flash('No selected file')
+            flash('No file selected')
             return redirect(request.url)
         if file and allowed_file(file.filename):  # save the file
             filename = secure_filename(file.filename)
@@ -201,12 +199,13 @@ def bulk_upload():
             data = parse_json(
                 os.path.join(app.config['UPLOAD_FOLDER'], filename)
             )  # parse the json
-            newgenes = mongo.db.variants.insert_many(data)
-            flash('Upload successful!')
+            newgenes = bulk_variants(data)
 
-            return(redirect('/bulk_upload'))
+            return render_template('bulk_result.html', result = newgenes)
             # print(newgenes.inserted_ids)
             # return redirect(url_for('uploaded_file', filename=filename))
+        else:
+            flash('Please submit a json file')
 
     return render_template('bulk_upload.html')
 
