@@ -5,6 +5,18 @@
 {% block body_block %}
 
 <div style="padding: 100px;">
+
+    <div style="font-size: 20px; font-weight: 300;">
+        Search terms used:<br>
+        <div style="padding-left: 40px;">
+            {% for term in terms %}
+                <li><b>{{term}}</b></li>
+            {% endfor %}
+        </div>
+        <br>
+        Total variants found: <b>{{total}}</b>
+        <br></br>
+    </div>
     <table id="variant_table" class="display">
         <thead>
             <th>Name</th>

@@ -280,11 +280,25 @@ def search():
         }
         query_dict = {}
 
+        # human readable searches to display in template
+        terms = []
+
         # build dict to search with from passed fields
         for key, val in search_dict.items():
             for k, v in val.items():
                 if v is not None and '-' not in str(v) and v != '':
                     query_dict[key] = val
+                    if isinstance(v, list):
+                        # some are lists of 1 element
+                        v = v[0]
+                    terms.append(f"{key}: {v}")
+
+        # terms = ' - '.join(terms).replace('_', ' ').replace('mappings.', '')
+        # terms = terms.replace('mappings.', '').replace('seq region name', 'chromosome').replace('_', ' ')
+
+        terms = [x.replace('_', ' ').replace('mappings.', '').replace('seq region name', 'chromosome').replace('_', ' ') for x in terms]
+
+        print(terms)
 
         # query database
         result = list(
@@ -322,7 +336,11 @@ def search():
 
             variants.append(var_dict)
 
-        return render_template('search_results.html', variants=variants)
+        total = len(variants)
+
+        return render_template(
+            'search_results.html', variants=variants, terms=terms, total=total
+        )
 
     # render empty form
     return render_template('search.html', form=form)
