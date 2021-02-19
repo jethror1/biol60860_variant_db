@@ -9,7 +9,7 @@ Variant database created with MongoDB and Flask as part of BIOL60860 IT for Adva
 - Jethro Rainford
 - Fern Johnson
 
-![Variant Database](/static/variantDb.jpg)
+![Variant Database](/static/images/variantDb.png)
 
 ## Description
 
@@ -28,6 +28,9 @@ If successful the user is redirected to a page notifying them of the successful 
 If a variant with the given name is already present within the database an error will be returned to the user and the data will **NOT** be saved to the database. The user will instead be redirected to a page notifying them of theis error.
 
 ### Bulk Variant Upload (via JSON File)
+
+Users can submit a JSON file of variants for bulk upload into the database.  Only JSON files will be accepted, otherwise the use will be prompted to upload a JSON file.
+After upload the user is directed to a page with a list of results for the submitted variants, either the ID of the newly created document is given, or the error message returned by the database if the upload of the variant was unsuccessful. 
 
 ## Future Work
 
