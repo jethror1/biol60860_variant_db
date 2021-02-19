@@ -15,10 +15,11 @@ from werkzeug.utils import secure_filename
 from wtforms import StringField, SubmitField, SelectField, IntegerField
 import wtforms.validators as validators
 
+from config import SECRET_KEY, MONGO_URI
 
 app = Flask(__name__)
 # Flask-WTF requires an encryption key - the string can be anything
-app.config['SECRET_KEY'] = 'C2HWGVoMGfNTBsrYQg8EcMrdTimkZfAb'
+app.config['SECRET_KEY'] = SECRET_KEY
 
 # UPLOAD_FOLDER = "/home/fern/scripts/biol60860_variant_db/uploads"
 
@@ -26,7 +27,7 @@ UPLOAD_FOLDER = f"{os.getcwd()}/uploads"
 
 ALLOWED_EXTENSIONS = {"json"}
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/manchester2021"
+app.config["MONGO_URI"] = MONGO_URI
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mongo = PyMongo(app)
 Bootstrap(app)
