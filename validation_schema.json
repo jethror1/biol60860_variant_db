@@ -1,0 +1,19 @@
+{
+  $jsonSchema: {
+    required: [
+      'name',
+      'ancestral_allele',
+      'minor_allele',
+      'mappings.assembly_name',
+      'mappings.start',
+      'mappings.seq_region_name',
+      'mappings.end',
+      'source'
+    ],
+    properties: {
+      name: {
+        bsonType: 'string'
+      }
+    }
+  }
+}

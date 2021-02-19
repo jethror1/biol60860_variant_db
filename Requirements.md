@@ -1,5 +1,5 @@
 # Requirements
-Version: 1
+Version: 2
 Author: Fern Johnson 
 
 ## Goal 
@@ -11,6 +11,8 @@ Produce a large data that can be queried by Genomic Clinical Scientists via a fr
 3. ..., I want to find all the missense variants in the database to test a missense prediction tool.
 4. ..., I want to be able to see where the information has come from and when it was uploaded, so I know it is up to date and reliable.
 5. ..., I want to easily navigate to other data sources, such as the dbSNP entry for a variant, to easily find more information.
+6. ..., I want to be able to review the data I upload before confirming to check it is correct.
+
 
 ## Non functional requirements
 1. The database must be a NoSQL database.

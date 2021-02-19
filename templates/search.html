@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<div style="padding-top: 100px; padding-left: 250px; padding-right: 50%;">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+            <h3><b>{{ message }}</b></h3>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+
+    <h3>Select parameters by which to search:</h3>
+    <br>
+    {{ wtf.quick_form(form) }}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock scripts %}

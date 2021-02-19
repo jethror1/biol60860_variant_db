@@ -1,0 +1,28 @@
+    
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<html>
+    <div style="padding: 100px;">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <h3><b>{{ message }}</b></h3>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+        
+        Single upload page
+        {{ wtf.quick_form(form) }}
+    </div>
+</form>
+
+</html>
+
+{% endblock %}

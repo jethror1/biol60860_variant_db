@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+<html>
+	<!-- Banner -->
+	<section id="banner">
+		<div class="inner">
+			<h1>amazing shiny variant db</h1>
+			<p>Web portal for variant database</p>
+		</div>
+    </section>
+
+
+
+    <section class="wrapper">
+		<div class="inner">
+            <div class="highlights" style="padding-top: 100px;">
+				<section>
+					<div class="content" data-tooltip="View variants in database and make queries etc.">
+						<a href="search"><img src="/static/images/search.png" style="width:350px;height:390px;"></a>
+					</div>
+                </section>
+                <section>
+					<div class="content" data-tooltip="Upload single variant data to database">
+						<a href="single_upload"><img src="/static/images/single_upload.png" style="width:350px;height:390px;"></a>
+					</div>
+				</section>
+				<section>
+					<div class="content" data-tooltip="Bulk upload JSON of variant data to database">
+						<a href="bulk_upload"><img src="/static/images/bulk_upload.png" style="width:350px;height:390px;"></a>
+					</div>
+                </section>
+            </div>
+            <div class="" style="margin: auto; max-width: 395px; text-align: center;">
+				<h3><b>Total variants in database: {{ total_vars }}</b></h3>
+				<!-- hard coded date for now as mongo requires adding date attribute to all records -->
+				<h4><b>Last updated: 18/02/2021</b></h4> 
+            </div>
+        </div>
+    </section>
+</html>
+
+{% endblock %}

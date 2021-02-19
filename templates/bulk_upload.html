@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+<p>Please upload a json file</p>
+
+<html>
+    <body style="padding: 150px;">
+        <form method=POST enctype=multipart/form-data>
+            <input type=file name=file>
+            <input type=submit value=Upload>
+        </form>
+
+       {% for mesg in get_flashed_messages() %}
+      <h5>{{ mesg }}</h5>
+      {% endfor %}
+    </body>
+   
+</html>
+
+{% endblock %}

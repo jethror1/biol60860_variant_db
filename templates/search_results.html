@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+<div style="padding: 100px;">
+
+    <div style="font-size: 20px; font-weight: 300;">
+        Search terms used:<br>
+        <div style="padding-left: 40px;">
+            {% for term in terms %}
+                <li><b>{{term}}</b></li>
+            {% endfor %}
+        </div>
+        <br>
+        Total variants found: <b>{{total}}</b>
+        <br></br>
+    </div>
+    <table id="variant_table" class="display">
+        <thead>
+            <th>Name</th>
+            <th>GRCh37</th>
+            <th>GRCh38</th>
+            <th>MAF</th>
+            <th>Ambiguity</th>
+            <th>Class</th>
+            <th style="width: 12%;">Synonyms</th>
+            <th style="width: 12%;">Evidence</th>
+            <th>Ancestral allele</th>
+            <th>Minor allele</th>
+            <th>Consequence</th>
+            <th>Clinical Significance</th>
+        </thead>
+        <tbody>
+            {% for var in variants %}
+            <tr>
+                <td>{{var.name}}</td>
+                <td>{{var.GRCh37}}</td>
+                <td>{{var.GRCh38}}</td>
+                <td>{{var.MAF}}</td>
+                <td>{{var.ambiguity}}</td>
+                <td>{{var.var_class}}</td>
+                <td>{{var.synonyms}}</td>
+                <td>{{var.evidence}}</td>
+                <td>{{var.ancestral_allele}}</td>
+                <td>{{var.minor_allele}}</td>
+                <td>{{var.most_severe_consequence}}</td>
+                <td>{{var.clinical_significance}}</td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock scripts %}
+
