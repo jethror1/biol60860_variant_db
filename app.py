@@ -267,6 +267,7 @@ def search():
 
             if not form.chromosome.data and (form.start.data or form.end.data):
                 # missing chrom with start or end
+                flash(u'Missing chromosome, start or end in form', 'error')
                 return render_template('search.html', form=form)
 
         search_dict = {
@@ -285,6 +286,7 @@ def search():
                 if v is not None and '-' not in str(v) and v != '':
                     query_dict[key] = val
 
+        # query database
         result = list(
             mongo.db.variants.find(query_dict, {
                 'name': 1, 'mappings': 1, 'MAF': 1, 'ambiguity': 1,
@@ -297,6 +299,7 @@ def search():
         variants = []
 
         for var in result:
+            # build dict with formatting to pass to template
             var = defaultdict(int, var)
             var_dict = defaultdict(None)
 
