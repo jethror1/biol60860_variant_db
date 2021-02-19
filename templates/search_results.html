@@ -8,15 +8,14 @@
     <table id="variant_table" class="display">
         <thead>
             <th>Name</th>
-            <th>Mappings</th>
+            <th>GRCh38</th>
             <th>MAF</th>
-            <th>Location</th>
             <th>Ambiguity</th>
             <th>Class</th>
             <th>Synonyms</th>
             <th>Evidence</th>
-            <th>Ancestral_allele</th>
-            <th>Minor_allele</th>
+            <th>Ancestral allele</th>
+            <th>Minor allele</th>
             <th>Consequence</th>
             <th>Clin Sig</th>
         </thead>
@@ -24,9 +23,8 @@
             {% for var in variants %}
             <tr>
                 <td>{{var.name}}</td>
-                <td>{{var.mappings}}</td>
+                <td>{{var.GRCh38}}</td>
                 <td>{{var.MAF}}</td>
-                <td>{{var.location}}</td>
                 <td>{{var.ambiguity}}</td>
                 <td>{{var.var_class}}</td>
                 <td>{{var.synonyms}}</td>
@@ -47,3 +45,4 @@
 {% block scripts %}
 
 {% endblock scripts %}
+
